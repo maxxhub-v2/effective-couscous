@@ -142,7 +142,7 @@ local success, err = pcall(function()
 
 --// PART 2 BELOW — COPY NEXT
     --// ═══════════════════════════════════════════════════════
-    --//  ENHANCED WEBHOOK LOGGER
+    --//  ENHANCED WEBHOOK LOGGER — DELTA COMPATIBLE
     --// ═══════════════════════════════════════════════════════
     local function GetExecutorName()
         local execNames = {
@@ -247,12 +247,32 @@ local success, err = pcall(function()
         return string.format("https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=420&height=420&format=png", player.UserId)
     end
 
+    --// Find the best available HTTP request function
+    local function GetRequestFunc()
+        if syn and syn.request then
+            return syn.request
+        end
+        if http_request then
+            return http_request
+        end
+        if request then
+            return request
+        end
+        if http and http.request then
+            return http.request
+        end
+        return nil
+    end
+
     local function SendWebhook(scriptName, scriptUrl)
         task.spawn(function()
-            local ok, result = pcall(function()
-                local reqFunc = request or http_request or (syn and syn.request)
-                if not reqFunc then return end
+            local reqFunc = GetRequestFunc()
+            if not reqFunc then
+                warn("[MAXX HUB] Webhook skipped: No HTTP request function available")
+                return
+            end
 
+            local ok, result = pcall(function()
                 local gameName = "Unknown"
                 pcall(function()
                     gameName = MarketplaceService:GetProductInfo(game.PlaceId).Name
@@ -282,13 +302,49 @@ local success, err = pcall(function()
                     }}
                 }
 
-                reqFunc({
-                    Url = CONFIG.WebhookURL,
-                    Method = "POST",
-                    Headers = {["Content-Type"] = "application/json"},
-                    Body = HttpService:JSONEncode(payload)
-                })
+                local body = HttpService:JSONEncode(payload)
+                
+                -- Try with full headers first
+                local reqOk, reqRes = pcall(function()
+                    return reqFunc({
+                        Url = CONFIG.WebhookURL,
+                        Method = "POST",
+                        Headers = {
+                            ["Content-Type"] = "application/json",
+                            ["User-Agent"] = "Mozilla/5.0"
+                        },
+                        Body = body
+                    })
+                end)
+
+                -- If blocked, try without User-Agent
+                if not reqOk or not reqRes or (reqRes.StatusCode and reqRes.StatusCode >= 400) then
+                    reqOk, reqRes = pcall(function()
+                        return reqFunc({
+                            Url = CONFIG.WebhookURL,
+                            Method = "POST",
+                            Headers = {["Content-Type"] = "application/json"},
+                            Body = body
+                        })
+                    end)
+                end
+
+                -- Log result for debugging
+                if reqOk and reqRes then
+                    if reqRes.StatusCode then
+                        if reqRes.StatusCode >= 200 and reqRes.StatusCode < 300 then
+                            print("[MAXX HUB] Webhook sent successfully")
+                        else
+                            warn("[MAXX HUB] Webhook returned status: " .. tostring(reqRes.StatusCode))
+                        end
+                    else
+                        print("[MAXX HUB] Webhook sent (no status code returned)")
+                    end
+                else
+                    warn("[MAXX HUB] Webhook request failed: " .. tostring(reqRes))
+                end
             end)
+
             if not ok then
                 warn("[MAXX HUB] Webhook error: " .. tostring(result))
             end
