@@ -1,7 +1,7 @@
 --[[
     ╔══════════════════════════════════════════════════════════════╗
     ║         MAXX HUB  →  MULTI-SCRIPT EXECUTOR PLATFORM          ║
-    ║  Cyraa • Tora • Fartez • NotZnx • Mystrix  |  Stats | Updates ║
+    ║  Cyraa • Tora • Fartez • NotZnx • Mystrix • Big Froot        ║
     ╚══════════════════════════════════════════════════════════════╝
     Key: Maxx-Hub-Athena
     Discord: https://discord.gg/nqEUcZm4s
@@ -32,6 +32,7 @@ local success, err = pcall(function()
         ScriptURL3 = "https://raw.githubusercontent.com/fartez127-design/FARTEZHUB/refs/heads/main/FARTEZHUBXKickaLuckyBlock",
         ScriptURL4 = "https://pastefy.app/hRlp73pi/raw",
         ScriptURL5 = "https://raw.githubusercontent.com/ummarxfarooq/mystrix-hub/refs/heads/main/loader",
+        ScriptURL6 = "https://raw.githubusercontent.com/hanniii1/Loader/refs/heads/main/BFLoader.lua",
         Colors = {
             Background = Color3.fromRGB(5, 5, 9),
             Surface = Color3.fromRGB(16, 16, 24),
@@ -43,6 +44,7 @@ local success, err = pcall(function()
             Fartez = Color3.fromRGB(255, 130, 0),
             NotZnx = Color3.fromRGB(0, 230, 180),
             Mystrix = Color3.fromRGB(255, 40, 180),
+            BigFroot = Color3.fromRGB(255, 100, 50),
             Text = Color3.fromRGB(245, 245, 255),
             SubText = Color3.fromRGB(130, 130, 150),
             Error = Color3.fromRGB(255, 60, 80),
@@ -89,7 +91,6 @@ local success, err = pcall(function()
     --// Safe HTTP getter for different executors
     local function SafeHttpGet(url)
         local src
-        -- Try game:HttpGet first
         if game.HttpGet then
             local ok, result = pcall(function()
                 return game:HttpGet(url, true)
@@ -98,7 +99,6 @@ local success, err = pcall(function()
                 src = result
             end
         end
-        -- Fallback: syn.request
         if not src and syn and syn.request then
             local ok, result = pcall(function()
                 local r = syn.request({Url = url, Method = "GET"})
@@ -108,7 +108,6 @@ local success, err = pcall(function()
                 src = result
             end
         end
-        -- Fallback: request
         if not src and request then
             local ok, result = pcall(function()
                 local r = request({Url = url, Method = "GET"})
@@ -118,7 +117,6 @@ local success, err = pcall(function()
                 src = result
             end
         end
-        -- Fallback: http_request
         if not src and http_request then
             local ok, result = pcall(function()
                 local r = http_request({Url = url, Method = "GET"})
@@ -128,10 +126,9 @@ local success, err = pcall(function()
                 src = result
             end
         end
-        -- Last resort: HttpGetAsync
         if not src and game.HttpGetAsync then
             local ok, result = pcall(function()
-                return game:HttpGetAsync(url)
+                return game.HttpGetAsync(url)
             end)
             if ok and result and #result > 0 then
                 src = result
@@ -504,7 +501,7 @@ local success, err = pcall(function()
     Create("UICorner", {CornerRadius = UDim.new(0, 14), Parent = updatesBlock})
     Create("Frame", {Size = UDim2.new(0, 3, 0, 40), Position = UDim2.new(0, 0, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5), BackgroundColor3 = CONFIG.Colors.Secondary, BorderSizePixel = 0, Parent = updatesBlock, ZIndex = 11})
     Create("TextLabel", {Size = UDim2.new(1, -20, 0, 20), Position = UDim2.new(0.5, 0, 0, 8), AnchorPoint = Vector2.new(0.5, 0), BackgroundTransparency = 1, Text = "📝  L A T E S T   U P D A T E S", TextColor3 = CONFIG.Colors.Secondary, Font = Enum.Font.GothamBold, TextSize = 12, Parent = updatesBlock, ZIndex = 11})
-    Create("TextLabel", {Size = UDim2.new(1, -24, 0, 46), Position = UDim2.new(0.5, 0, 0, 30), AnchorPoint = Vector2.new(0.5, 0), BackgroundTransparency = 1, Text = "• Added Mystrix Hub (Op Script)\n• 5-script scrolling selector\n• Delta executor compatibility", TextColor3 = CONFIG.Colors.SubText, Font = Enum.Font.Gotham, TextSize = 11, TextWrapped = true, TextYAlignment = Enum.TextYAlignment.Top, Parent = updatesBlock, ZIndex = 11})
+    Create("TextLabel", {Size = UDim2.new(1, -24, 0, 46), Position = UDim2.new(0.5, 0, 0, 30), AnchorPoint = Vector2.new(0.5, 0), BackgroundTransparency = 1, Text = "• Added Mystrix Hub (Op Script)\n• Added Big Froot Loader\n• 6-script scrolling selector\n• Delta executor compatibility", TextColor3 = CONFIG.Colors.SubText, Font = Enum.Font.Gotham, TextSize = 11, TextWrapped = true, TextYAlignment = Enum.TextYAlignment.Top, Parent = updatesBlock, ZIndex = 11})
 
     --// Multi-Script Platform Block
     local multiBlock = Create("Frame", {
@@ -537,7 +534,7 @@ local success, err = pcall(function()
         Size = UDim2.new(1, -80, 0, 18),
         Position = UDim2.new(0, 16, 0, 30),
         BackgroundTransparency = 1,
-        Text = "Execute from 5 premium curated scripts",
+        Text = "Execute from 6 premium curated scripts",
         TextColor3 = CONFIG.Colors.SubText,
         Font = Enum.Font.Gotham,
         TextSize = 11,
@@ -560,7 +557,7 @@ local success, err = pcall(function()
     Create("TextLabel", {
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
-        Text = "5",
+        Text = "6",
         TextColor3 = Color3.fromRGB(30, 20, 0),
         Font = Enum.Font.GothamBlack,
         TextSize = 18,
@@ -795,7 +792,7 @@ local success, err = pcall(function()
         ScrollBarThickness = 3,
         ScrollBarImageColor3 = CONFIG.Colors.SubText,
         BorderSizePixel = 0,
-        CanvasSize = UDim2.new(0, 0, 0, 650)
+        CanvasSize = UDim2.new(0, 0, 0, 720)
     })
 
     local gridLayout = Create("UIGridLayout", {
@@ -874,13 +871,17 @@ local success, err = pcall(function()
     local toraStatus, toraExecContainer = MakeScriptBlock("🔥  TORA IS ME", "Alternative Lucky Block script\nEnhanced features & bypasses", CONFIG.Colors.Tora)
     local fartezStatus, fartezExecContainer = MakeScriptBlock("💥  FARTEZ HUB", "Powerful Lucky Block executor\nAdvanced automation tools", CONFIG.Colors.Fartez)
     local notznxStatus, notznxExecContainer = MakeScriptBlock("🌌  NOTZNX", "Lightweight Lucky Block script\nFast & reliable execution\n⚠️ Contains its own key system", CONFIG.Colors.NotZnx)
-    local mystrixStatus, mystrixExecContainer = MakeScriptBlock("🌀  MYSTRIX HUB", "Op Script\n⚠️ Contains its own key system\n🔴 High chance to get banned", CONFIG.Colors.Mystrix)
+    local mystrixStatus, mystrixExecContainer = MakeScriptBlock("🌀  MYSTRIX HUB", "Op Script\n⚠️ Contains its own key system", CONFIG.Colors.Mystrix)
+    local bigfrootStatus, bigfrootExecContainer = MakeScriptBlock("🍊  BIG FROOT", "Big Froot script loader\nEnhanced gameplay features", CONFIG.Colors.BigFroot)
 
     notznxStatus.Text = "🔑 Requires external key"
     notznxStatus.TextColor3 = CONFIG.Colors.Warning
 
     mystrixStatus.Text = "🔑 Requires external key"
     mystrixStatus.TextColor3 = CONFIG.Colors.Warning
+
+    bigfrootStatus.Text = "🔑 Requires external key"
+    bigfrootStatus.TextColor3 = CONFIG.Colors.Warning
 
     Create("TextLabel", {Size = UDim2.new(1, -40, 0, 20), Position = UDim2.new(0.5, 0, 1, -26), AnchorPoint = Vector2.new(0.5, 0), BackgroundTransparency = 1, Text = "MAXX HUB  •  Multi-Script Platform  •  discord.gg/nqEUcZm4s", TextColor3 = CONFIG.Colors.SubText, Font = Enum.Font.Gotham, TextSize = 11, Parent = selectorFrame, ZIndex = 10})
 
@@ -981,6 +982,7 @@ local success, err = pcall(function()
     MakeExecuteBtn(fartezExecContainer, CONFIG.Colors.Fartez, "▶  EXECUTE FARTEZ", CONFIG.ScriptURL3, fartezStatus)
     MakeExecuteBtn(notznxExecContainer, CONFIG.Colors.NotZnx, "▶  EXECUTE NOTZNX", CONFIG.ScriptURL4, notznxStatus)
     MakeExecuteBtn(mystrixExecContainer, CONFIG.Colors.Mystrix, "▶  EXECUTE MYSTRIX", CONFIG.ScriptURL5, mystrixStatus)
+    MakeExecuteBtn(bigfrootExecContainer, CONFIG.Colors.BigFroot, "▶  EXECUTE BIG FROOT", CONFIG.ScriptURL6, bigfrootStatus)
 
     --// Entrance Animation
     keyFrame.Size = UDim2.new(0, 0, 0, 0)
@@ -1050,7 +1052,7 @@ local success, err = pcall(function()
         end
     end)
 
-    print("[MAXX HUB] Loaded successfully | 5-Script Platform | Delta Ready")
+    print("[MAXX HUB] Loaded successfully | 6-Script Platform | Delta Ready")
 end)
 
 if not success then
